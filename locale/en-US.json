@@ -1,0 +1,6 @@
+{
+  "termux.name": "Native tools (Termux)",
+  "termux.search": "Search the package repository",
+  "termux.install": "Install packages on this phone",
+  "termux.run": "Run an installed tool"
+}

@@ -1,0 +1,7 @@
+# 把本插件插进 profile 的层栈。安装后重启引擎生效。
+- insert:
+    - id: termux
+      name: dsh-termux
+      config:
+        # 装在哪儿：默认 $HOME/work/tbins/prefix（和手工装的那份共用）
+        prefixDir: ''

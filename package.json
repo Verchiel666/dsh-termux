@@ -1,0 +1,39 @@
+{
+  "name": "dsh-termux",
+  "version": "0.1.0",
+  "description": "在 DSH 里装并运行 Android 原生命令行工具：从 Termux 仓库取 aarch64 bionic 包，纯 JS 解 xz/tar，用 /system/bin/linker64 加载执行（无需 root/Shizuku）",
+  "type": "module",
+  "main": "index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.mjs",
+    "lib/",
+    "cordis.patch.yml",
+    "icon.svg",
+    "locale/"
+  ],
+  "dependencies": {
+    "xz-decompress": "^0.2.3"
+  },
+  "engines": {
+    "dsh": ">=0.2.0"
+  },
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "capabilities": [
+      "tools:register",
+      "network:egress",
+      "subprocess",
+      "fs:write"
+    ],
+    "labels": []
+  }
+}

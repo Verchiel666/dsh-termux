@@ -1,0 +1,6 @@
+{
+  "termux.name": "原生工具（Termux）",
+  "termux.search": "搜索仓库里的包",
+  "termux.install": "安装包到本机",
+  "termux.run": "运行已装的工具"
+}

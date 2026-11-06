@@ -125,6 +125,7 @@ export function apply(ctx, config = {}) {
           args: { type: 'array', items: { type: 'string' }, description: '命令行参数' },
           stdin: { type: 'string', description: '喂给标准输入的内容' },
           cwd: { type: 'string', description: '工作目录（默认 home）' },
+          env: { type: 'object', description: '额外环境变量（会覆盖按 prefix 自动设置的那些）' },
           timeoutMs: { type: 'number', description: '超时毫秒（默认 60000，上限 300000）' },
         },
         required: ['tool'],
@@ -141,6 +142,7 @@ export function apply(ctx, config = {}) {
           args: Array.isArray(args.args) ? args.args : [],
           stdin: args.stdin,
           cwd: args.cwd,
+          env: args.env,
           timeoutMs,
         });
         const parts = [`$ ${res.command}`, `退出码 ${res.code}`];

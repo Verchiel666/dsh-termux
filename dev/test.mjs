@@ -1,5 +1,5 @@
 // dsh-termux 自测：核心逻辑离线跑；网络/运行部分用 DSH_TERMUX_NET=1 打开。
-import { readFileSync, mkdtempSync, rmSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, mkdtempSync, rmSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -198,5 +198,32 @@ if (process.env.DSH_TERMUX_NET === '1') {
   console.log('\n（跳过联网/真跑；要看就 DSH_TERMUX_NET=1 node dev/test.mjs）');
 }
 
+// ---------- buildEnv：把 Termux 写死的 $PREFIX 路径用环境变量指过来 ----------
+console.log('\nbuildEnv');
+const { buildEnv } = await import('../lib/termux.mjs');
+await t('存在的支持文件才设环境变量', async () => {
+  const usr = mkdtempSync(join(tmpdir(), 'env-'));
+  try {
+    mkdirSync(join(usr, 'share/misc'), { recursive: true });
+    writeFileSync(join(usr, 'share/misc/magic.mgc'), 'x');
+    const env = await buildEnv(usr);
+    assert.equal(env.MAGIC, join(usr, 'share/misc/magic.mgc'), 'MAGIC 要指到我们的 magic.mgc');
+    assert.equal(env.SSL_CERT_FILE, undefined, '没有证书就别设');
+    assert.equal(env.PREFIX, usr);
+    assert.ok(env.LD_LIBRARY_PATH.startsWith(join(usr, 'lib')));
+    assert.ok(env.PATH.startsWith(join(usr, 'bin')));
+  } finally { rmSync(usr, { recursive: true, force: true }); }
+});
+await t('extra env 覆盖自动值，非法键被忽略', async () => {
+  const usr = mkdtempSync(join(tmpdir(), 'env-'));
+  try {
+    const env = await buildEnv(usr, { PREFIX: '/custom', 'bad key': 'x', OK: 1 });
+    assert.equal(env.PREFIX, '/custom');
+    assert.equal(env.OK, '1');
+    assert.equal(env['bad key'], undefined);
+  } finally { rmSync(usr, { recursive: true, force: true }); }
+});
+
 console.log(`\n${fails.length ? 'FAILED' : 'PASSED'}: ${pass} passed, ${fails.length} failed`);
 if (fails.length) { for (const f of fails) console.log(`  - ${f}`); process.exit(1); }
+

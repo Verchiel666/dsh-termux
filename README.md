@@ -40,6 +40,22 @@ bionic 构建（`PT_INTERP=/system/bin/linker64`）。SELinux 拦的是 `execve`
 - 网络只连 `packages.termux.dev`（索引 + 包体），索引缓存 24 小时，`.deb` 缓存在 `prefix/.cache/debs`。
 - 装的是**别人的二进制**：来源是 Termux 官方仓库并有 SHA256 校验，但你仍然应该知道自己装的是什么。
 
+
+## 环境变量（0.1.2 起自动设置）
+
+Termux 的包在编译时把 `$PREFIX=/data/data/com.termux/files/usr` 写死了，我们装在别处，
+所以 `termux_run` 会按 prefix 里**实际存在**的文件补上这些变量（环境变量优先于编译期默认值）：
+
+| 变量 | 指向 | 谁需要 |
+|---|---|---|
+| `LD_LIBRARY_PATH` | `usr/lib` | 所有动态链接的包 |
+| `PREFIX` / `PATH` | `usr` / `usr/bin` | 大部分脚本 |
+| `MAGIC` | `usr/share/misc/magic.mgc` | `file`（否则报 could not find any valid magic files） |
+| `SSL_CERT_FILE` / `SSL_CERT_DIR` | `usr/etc/tls/...` | curl / wget / openssl |
+| `TERMINFO` / `TZDIR` | `usr/share/terminfo`、`usr/share/zoneinfo` | less / vim / date |
+| `GIT_EXEC_PATH` | `usr/libexec/git-core` | git（子进程仍受 execve 限制，见上） |
+
+需要临时覆盖就传 `env`：`termux_run {tool:"file", args:["x"], env:{"MAGIC":"/path/magic"}}`。
 ## 装法
 
 ```

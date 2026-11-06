@@ -1,5 +1,10 @@
 # dsh-termux
 
+[![npm](https://img.shields.io/npm/v/dsh-termux.svg)](https://www.npmjs.com/package/dsh-termux)
+[![license](https://img.shields.io/npm/l/dsh-termux.svg)](LICENSE)
+
+`npm i dsh-termux` · [GitHub](https://github.com/Verchiel666/dsh-termux) · [Issues](https://github.com/Verchiel666/dsh-termux/issues)
+
 **在 DSH 里装并运行 Android 原生命令行工具。** 从 Termux 官方仓库取 aarch64 包，纯 JS 解压（xz + tar，无原生依赖），
 用 `/system/bin/linker64` 加载执行 —— 不需要 root，不需要 Shizuku。
 
